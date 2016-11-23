@@ -24,9 +24,9 @@ isbn VARCHAR(20) NOT NULL
 )ENGINE=InnoDB;
 
 CREATE TABLE nide (
-nidenro INT NOT NULL AUTO_INCREMENT 
+nidenro INT NOT NULL 
 ,isbn VARCHAR(20) NOT NULL
-,PRIMARY KEY (nidenro)
+,PRIMARY KEY (isbn,nidenro)
 ,FOREIGN KEY (isbn) REFERENCES kirja (isbn)
 )ENGINE=InnoDB;
 
@@ -40,9 +40,10 @@ numero INT NOT NULL AUTO_INCREMENT
 
 CREATE TABLE nidelainaus (
 lainausnro INT NOT NULL
+,isbn VARCHAR(20) NOT NULL
 ,nidenro INT NOT NULL
 ,palautuspvm DATE
-,PRIMARY KEY (lainausnro,nidenro)
+,PRIMARY KEY (lainausnro,isbn,nidenro)
 ,FOREIGN KEY (lainausnro) REFERENCES lainaus (numero)
-,FOREIGN KEY (nidenro) REFERENCES nide (nidenro)
+,FOREIGN KEY (isbn,nidenro) REFERENCES nide (isbn,nidenro)
 )ENGINE=InnoDB;
