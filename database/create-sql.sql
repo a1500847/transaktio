@@ -37,3 +37,12 @@ numero INT NOT NULL AUTO_INCREMENT
 ,PRIMARY KEY (numero)
 ,FOREIGN KEY (asiakasnro) REFERENCES asiakas (numero) 
 )ENGINE=InnoDB;
+
+CREATE TABLE nidelainaus (
+lainausnro INT NOT NULL
+,nidenro INT NOT NULL
+,palautuspvm DATE
+,PRIMARY KEY (lainausnro,nidenro)
+,FOREIGN KEY (lainausnro) REFERENCES lainaus (numero)
+,FOREIGN KEY (nidenro) REFERENCES nide (nidenro)
+)ENGINE=InnoDB;
