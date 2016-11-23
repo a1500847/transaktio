@@ -15,8 +15,17 @@ VALUES ('Esko','Kivikoski','Orioninkatu 78 B 23','00550');
 INSERT INTO kirja (isbn, nimi, kirjoittaja, painos, kustantaja)
 VALUES('154643-3543','Kukkuluuruu','Keijo Kukkanen','5. painos','WSOY');
 
-INSERT INTO nide (isbn)
-VALUES('154643-3543');
+INSERT INTO kirja (isbn, nimi, kirjoittaja, painos, kustantaja)
+VALUES('12345678-112','pöö','Kalle Kukkonen','6. painos','WSOY');
+
+INSERT INTO nide (nidenro, isbn)
+VALUES(1, '154643-3543');
+
+INSERT INTO nide (nidenro, isbn)
+VALUES(2, '154643-3543');
+
+INSERT INTO nide (nidenro, isbn)
+VALUES(1, '12345678-112');
 
 INSERT INTO lainaus (lainauspvm,asiakasnro)
 VALUES('2016-06-15',3);
@@ -24,7 +33,8 @@ VALUES('2016-06-15',3);
 INSERT INTO lainaus (lainauspvm,asiakasnro)
 VALUES('2016-06-14',1);
 
-INSERT INTO nidelainaus (lainausnro,nidenro)
-VALUES(2,3);
+INSERT INTO nidelainaus (lainausnro,isbn, nidenro)
+VALUES(1,'154643-3543', 1);
 
-   
+INSERT INTO nidelainaus (lainausnro, isbn, nidenro)
+VALUES (2, '154643-3543', 2);
