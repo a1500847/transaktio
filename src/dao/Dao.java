@@ -23,14 +23,14 @@ public class Dao {
 		Connection tietokantayhteys = null;
 
 		String JDBCAjuri = "org.mariadb.jdbc.Driver";
-		String url = "jdbc:mariadb://localhost:3306/projekti"; //TÄHÄN PROTON OSOITE!
+		String url = "jdbc:mariadb://localhost/projekti";
 
 		try {
 			Class.forName(JDBCAjuri).newInstance(); // ajurin määritys
 
 			// otetaan yhteys tietokantaan
 			tietokantayhteys = DriverManager.getConnection(url, "projekti",
-					"SALASANA TÄHÄN"); 
+					"seDEU297u"); 
 
 			// yhteyden otto onnistu
 		} catch (SQLException sqlE) {
