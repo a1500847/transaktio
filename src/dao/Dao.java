@@ -13,13 +13,11 @@ import java.util.Date;
 import java.util.List;
 import java.sql.Statement;
 
-import pizzicato.model.Pizza;
-import pizzicato.model.dao.Exception;
-import pizzicato.model.dao.RuntimeException;
-import pizzicato.model.dao.Statement;
-import pizzicato.model.dao.String;
 import kohdeluokat.Asiakas;
+import kohdeluokat.Kirja;
 import kohdeluokat.Lainaus;
+import kohdeluokat.Nide;
+import kohdeluokat.NideLainaus;
 import kohdeluokat.PostinumeroAlue;
 
 
@@ -78,17 +76,58 @@ public class Dao {
 	}
 	
 	private Lainaus read(ResultSet rs) {
+		Date palautusPvm = null;
+		NideLainaus nideLainaus = null;
 		try {
-			int numero = rs.getInt("numero");
+			Lainaus lainaus = new Lainaus();
+			int nro = rs.getInt("numero");
 			Date lainausPvm = rs.getDate("lainauspvm");
+			lainaus.setNumero(nro);
+			lainaus.setLainausPvm(lainausPvm);
+			
 			int asiakasNro = rs.getInt("asiakasnro");
-			return new Lainaus(numero, lainausPvm);
+			String etuNimi = rs.getString("etunimi");
+			String sukuNimi = rs.getString("sukunimi");
+			String osoite = rs.getString("osoite");
+			String postiNro = rs.getString("postinro");
+			String postiTmp = rs.getString("postitmp");
+			Asiakas lainaaja = new Asiakas(asiakasNro, etuNimi, sukuNimi, osoite, new PostinumeroAlue(postiNro,postiTmp));
+			lainaus.setLainaaja(lainaaja);
+			
+			String isbn = rs.getString("isbn");
+			String nimi = rs.getString("nimi");
+			String kirjoittaja = rs.getString("kirjoittaja");
+			String painos = rs.getString("painos");
+			String kustantaja = rs.getString("kustantaja");
+			Kirja kirja = new Kirja(isbn, nimi, kirjoittaja, painos, kustantaja);
+			
+			int nideNro = rs.getInt("nidenro");
+			Nide nide = new Nide(kirja, nideNro);	
+			
+			ArrayList<NideLainaus> lista = new ArrayList<NideLainaus>();
+			
+			while(rs.next()) {
+				palautusPvm = rs.getDate("palautuspvm");
+				nideLainaus = new NideLainaus(nide, palautusPvm);
+				lista.add(nideLainaus);						
+			}		
+			
+			
+			return lainaus;
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
 	}
 	
-	public ArrayList <Lainaus> haeKaikki(){
+	/*private ArrayList<Integer> readLainausNrot(ResultSet rs){
+		try{
+			
+		}catch(SQLException e){
+			throw new RuntimeException(e);
+		}
+	}*/
+	
+	public ArrayList <Lainaus> haeKaikki(int asiakasId){
 		Connection yhteys = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
@@ -97,20 +136,62 @@ public class Dao {
 		
 		try{
 			yhteys = yhdista();
-			String sqlSelect = "select l.numero, l.lainauspvm, l.asiakasnro, a.numero, a.etunimi, a.sukunimi, a.osoite, p.postinro, p.postitmp from lainaus l JOIN asiakas a ON a.numero = l.numero JOIN postinumeroalue p ON p.postinro = a.postinro;JOIN nide n ON n.isbn= k.isbn;";
+			String sqlSelect = "select l.numero, l.lainauspvm, l.asiakasnro, a.numero, a.etunimi, a.sukunimi, a.osoite, p.postinro, p.postitmp, nl.isbn, k.nimi, k.kirjoittaja, k.painos, k.kustantaja, nl.nidenro, nl.palautuspvm"
+					+ " from lainaus l join asiakas a ona.numero=l.numero join postinumeroalue p on a.postinro = p.postinro"
+					+ " join nidelainaus nl on nl.lainausnro = l.numero join nide n on n.nidenro = nl.nidenro"
+					+ " join nide n2 on n2.isbn = nl.isbn join kirja k on k.isbn = n.isbn"
+					+ " where a.numero=?"
+					+ " order by l.numero;";	
+			
 			stmt = yhteys.prepareStatement(sqlSelect);
+			
+			stmt.setInt(1, asiakasId);
+			
 			rs=stmt.executeQuery(sqlSelect);
+			
+			while(rs.next()) {
+				lainaus = read(rs);
+				lainat.add(lainaus);						
+			}	
 			
 		}catch(SQLException e){
 			throw new RuntimeException(e);
 		}finally{
 			close(rs,stmt,yhteys);
-		}
+		}		
+		return lainat;		
+	}
+	
+	public Lainaus hae(int asiakasId, int lainaId){
+		Connection yhteys = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		Lainaus lainaus = null;
 		
-		
-		
-		return lainat;
-		
+		try{
+			yhteys = yhdista();
+			String sqlSelect = "select l.numero, l.lainauspvm, l.asiakasnro, a.numero, a.etunimi, a.sukunimi, a.osoite, p.postinro, p.postitmp, nl.isbn, k.nimi, k.kirjoittaja, k.painos, k.kustantaja, nl.nidenro, nl.palautuspvm"
+								+ " from lainaus l join asiakas a ona.numero=l.numero join postinumeroalue p on a.postinro = p.postinro"
+								+ " join nidelainaus nl on nl.lainausnro = l.numero join nide n on n.nidenro = nl.nidenro"
+								+ " join nide n2 on n2.isbn = nl.isbn join kirja k on k.isbn = n.isbn"
+								+ " where a.numero=?"
+								+ " and l.numero =?"
+								+ " order by l.lainauspvm;";
+			stmt = yhteys.prepareStatement(sqlSelect);
+			
+			stmt.setInt(1, asiakasId);
+			stmt.setInt(2, lainaId);
+			
+			rs=stmt.executeQuery(sqlSelect);
+			
+			lainaus = read(rs);
+			
+		}catch(SQLException e){
+			throw new RuntimeException(e);
+		}finally{
+			close(rs,stmt,yhteys);
+		}		
+		return lainaus;		
 	}
 	
 }
