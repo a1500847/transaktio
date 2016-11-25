@@ -5,7 +5,7 @@ public class Kirja {
 	private String isbn;
 	private String nimi;
 	private String kirjoittaja;
-	private int painos;
+	private String painos;
 	private String kustantaja;
 	
 	public Kirja() {
@@ -13,7 +13,7 @@ public class Kirja {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Kirja(String isbn, String nimi, String kirjoittaja, int painos,
+	public Kirja(String isbn, String nimi, String kirjoittaja, String painos,
 			String kustantaja) {
 		super();
 		this.isbn = isbn;
@@ -47,11 +47,11 @@ public class Kirja {
 		this.kirjoittaja = kirjoittaja;
 	}
 
-	public int getPainos() {
+	public String getPainos() {
 		return painos;
 	}
 
-	public void setPainos(int painos) {
+	public void setPainos(String painos) {
 		this.painos = painos;
 	}
 
