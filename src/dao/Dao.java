@@ -82,7 +82,7 @@ public class Dao {
 			int numero = rs.getInt("numero");
 			Date lainausPvm = rs.getDate("lainauspvm");
 			int asiakasNro = rs.getInt("asiakasnro");
-			return new Lainaus(numero, lainausPvm, asiakasNro);
+			return new Lainaus(numero, lainausPvm);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
@@ -97,7 +97,7 @@ public class Dao {
 		
 		try{
 			yhteys = yhdista();
-			String sqlSelect = "";
+			String sqlSelect = "select l.numero, l.lainauspvm, l.asiakasnro, a.numero, a.etunimi, a.sukunimi, a.osoite, p.postinro, p.postitmp from lainaus l JOIN asiakas a ON a.numero = l.numero JOIN postinumeroalue p ON p.postinro = a.postinro;JOIN nide n ON n.isbn= k.isbn;";
 			stmt = yhteys.prepareStatement(sqlSelect);
 			rs=stmt.executeQuery(sqlSelect);
 			
