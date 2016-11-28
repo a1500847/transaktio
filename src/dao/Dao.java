@@ -220,7 +220,7 @@ public class Dao {
 	 		yhteys.setReadOnly(true);
 	 		yhteys.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			
-			String sqlSelect = "select distinct l.numero, l.lainauspvm, a.numero, a.etunimi, a.sukunimi, a.osoite, a.postinro, p.postitmp, k.isbn, k.nimi, k.kirjoittaja, k.painos, k.kustantaja, nl.nidenro, nl.palautuspvm"
+			String sqlSelect = "select distinct l.numero, l.lainauspvm, l.asiakasnro, a.etunimi, a.sukunimi, a.osoite, a.postinro, p.postitmp, k.isbn, k.nimi, k.kirjoittaja, k.painos, k.kustantaja, nl.nidenro, nl.palautuspvm"
 								+ " from lainaus l join asiakas a on a.numero=l.numero join postinumeroalue p on a.postinro = p.postinro"
 								+ " join nidelainaus nl on nl.lainausnro = l.numero"
 								+ " join nide n on n.isbn = nl.isbn join kirja k on k.isbn = n.isbn"
