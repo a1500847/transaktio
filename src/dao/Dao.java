@@ -108,7 +108,7 @@ public class Dao {
 				palautusPvm = rs.getDate("palautuspvm");
 				nideLainaus = new NideLainaus(nide, palautusPvm);
 				lainaus.addNiteenLainaus(nideLainaus);					
-			}rs.close();
+			}
 			
 			return lainaus;
 		} catch (SQLException e) {
@@ -190,10 +190,13 @@ public class Dao {
 			
 			yhteys.commit();
 			yhteys.close();
-			
+			System.out.println();
 			while(rs.next()) {
+				System.out.println(rs);
 				lainaus = read(rs);
-				lainat.add(lainaus);						
+				System.out.println(lainaus);
+				lainat.add(lainaus);
+				
 			}rs.close();	
 			
 		}catch(SQLException e){
@@ -218,7 +221,7 @@ public class Dao {
 	 		yhteys.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			
 			String sqlSelect = "select l.numero, l.lainauspvm, l.asiakasnro, a.numero, a.etunimi, a.sukunimi, a.osoite, a.postinro, p.postitmp, nl.isbn, k.nimi, k.kirjoittaja, k.painos, k.kustantaja, nl.nidenro, nl.palautuspvm"
-								+ " from lainaus l join asiakas a ona.numero=l.numero join postinumeroalue p on a.postinro = p.postinro"
+								+ " from lainaus l join asiakas a on a.numero=l.numero join postinumeroalue p on a.postinro = p.postinro"
 								+ " join nidelainaus nl on nl.lainausnro = l.numero join nide n on n.nidenro = nl.nidenro"
 								+ " join nide n2 on n2.isbn = nl.isbn join kirja k on k.isbn = n.isbn"
 								+ " where l.numero =?"
