@@ -204,7 +204,7 @@ public class Dao {
 		return lainat;		
 	}
 	
-	public Lainaus hae(int asiakasId, int lainaId){
+	public Lainaus hae(int lainaId){
 		Connection yhteys = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
