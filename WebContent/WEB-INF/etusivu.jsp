@@ -9,7 +9,7 @@
 </head>
 <body>
 <h2>Lainausten selaus</h2>
-<form action="LainaustenSelausOhjelma" method="get">
+<form action="LainausServlet" method="get">
 <table>
 <tr>
   <td>
