@@ -71,7 +71,7 @@ public class Dao {
 		}
 	}
 	
-	protected static void close(Statement stmt, Connection connection) {
+	protected static void suljeYhteys(Statement stmt, Connection connection) {
 		suljeYhteys (null, stmt, connection);
 	}
 	
@@ -104,14 +104,11 @@ public class Dao {
 			int nideNro = rs.getInt("nidenro");
 			Nide nide = new Nide(kirja, nideNro);	
 			
-			ArrayList<NideLainaus> lista = new ArrayList<NideLainaus>();
-			
 			while(rs.next()) {
 				palautusPvm = rs.getDate("palautuspvm");
 				nideLainaus = new NideLainaus(nide, palautusPvm);
-				lista.add(nideLainaus);						
-			}		
-			
+				lainaus.addNiteenLainaus(nideLainaus);					
+			}rs.close();
 			
 			return lainaus;
 		} catch (SQLException e) {
@@ -119,13 +116,55 @@ public class Dao {
 		}
 	}
 	
-	/*private ArrayList<Integer> readLainausNrot(ResultSet rs){
+	private int readLainausNro(ResultSet rs){
 		try{
 			
+			int numero = rs.getInt("numero");
+						
+			return numero;
 		}catch(SQLException e){
 			throw new RuntimeException(e);
 		}
-	}*/
+		
+	}
+	
+	public ArrayList<Integer> haeLainausNrot(int asiakasId){
+		Connection yhteys = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		int nro;
+		ArrayList<Integer> nrot = new ArrayList<Integer>();
+		
+		try{
+			yhteys = yhdista();
+			
+			String sqlSelect = "select numero from lainaus where asiakasnro=?;";
+			stmt = yhteys.prepareStatement(sqlSelect);
+			
+			stmt.setInt(1, asiakasId);
+			
+			rs=stmt.executeQuery(sqlSelect);
+			
+			yhteys.commit();
+			yhteys.close();
+			
+			while(rs.next()) {
+				nro = readLainausNro(rs);
+				nrot.add(nro);						
+			}rs.close();	
+			
+			
+		}catch(SQLException e){
+			throw new RuntimeException(e);
+		}finally{
+			suljeYhteys(rs,stmt,yhteys);
+		}
+		
+		
+		
+		return nrot;
+		
+	}
 	
 	public ArrayList <Lainaus> haeKaikki(int asiakasId){
 		Connection yhteys = null;
@@ -136,8 +175,13 @@ public class Dao {
 		
 		try{
 			yhteys = yhdista();
-			String sqlSelect = "select l.numero, l.lainauspvm, l.asiakasnro, a.numero, a.etunimi, a.sukunimi, a.osoite, p.postinro, p.postitmp, nl.isbn, k.nimi, k.kirjoittaja, k.painos, k.kustantaja, nl.nidenro, nl.palautuspvm"
-					+ " from lainaus l join asiakas a ona.numero=l.numero join postinumeroalue p on a.postinro = p.postinro"
+			
+			yhteys.setAutoCommit(false);
+	 		yhteys.setReadOnly(true);
+	 		yhteys.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+			
+			String sqlSelect = "select l.numero, l.lainauspvm, l.asiakasnro, a.numero, a.etunimi, a.sukunimi, a.osoite, a.postinro, p.postitmp, nl.isbn, k.nimi, k.kirjoittaja, k.painos, k.kustantaja, nl.nidenro, nl.palautuspvm"
+					+ " from lainaus l join asiakas a on a.numero=l.numero join postinumeroalue p on a.postinro = p.postinro"
 					+ " join nidelainaus nl on nl.lainausnro = l.numero join nide n on n.nidenro = nl.nidenro"
 					+ " join nide n2 on n2.isbn = nl.isbn join kirja k on k.isbn = n.isbn"
 					+ " where a.numero=?"
@@ -149,10 +193,13 @@ public class Dao {
 			
 			rs=stmt.executeQuery(sqlSelect);
 			
+			yhteys.commit();
+			yhteys.close();
+			
 			while(rs.next()) {
 				lainaus = read(rs);
 				lainat.add(lainaus);						
-			}	
+			}rs.close();	
 			
 		}catch(SQLException e){
 			throw new RuntimeException(e);
@@ -170,7 +217,12 @@ public class Dao {
 		
 		try{
 			yhteys = yhdista();
-			String sqlSelect = "select l.numero, l.lainauspvm, l.asiakasnro, a.numero, a.etunimi, a.sukunimi, a.osoite, p.postinro, p.postitmp, nl.isbn, k.nimi, k.kirjoittaja, k.painos, k.kustantaja, nl.nidenro, nl.palautuspvm"
+			
+			yhteys.setAutoCommit(false);
+	 		yhteys.setReadOnly(true);
+	 		yhteys.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+			
+			String sqlSelect = "select l.numero, l.lainauspvm, l.asiakasnro, a.numero, a.etunimi, a.sukunimi, a.osoite, a.postinro, p.postitmp, nl.isbn, k.nimi, k.kirjoittaja, k.painos, k.kustantaja, nl.nidenro, nl.palautuspvm"
 								+ " from lainaus l join asiakas a ona.numero=l.numero join postinumeroalue p on a.postinro = p.postinro"
 								+ " join nidelainaus nl on nl.lainausnro = l.numero join nide n on n.nidenro = nl.nidenro"
 								+ " join nide n2 on n2.isbn = nl.isbn join kirja k on k.isbn = n.isbn"
@@ -183,6 +235,9 @@ public class Dao {
 			stmt.setInt(2, lainaId);
 			
 			rs=stmt.executeQuery(sqlSelect);
+			
+			yhteys.commit();
+			yhteys.close();
 			
 			lainaus = read(rs);
 			
