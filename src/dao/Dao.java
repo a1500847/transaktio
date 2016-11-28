@@ -53,7 +53,7 @@ public class Dao {
 		return tietokantayhteys;
 	}
 	
-	protected static void close(ResultSet rs, Statement stmt, Connection conn) {
+	protected static void suljeYhteys(ResultSet rs, Statement stmt, Connection conn) {
 		
 		try {
 			if (rs !=null) {
@@ -72,7 +72,7 @@ public class Dao {
 	}
 	
 	protected static void close(Statement stmt, Connection connection) {
-		close (null, stmt, connection);
+		suljeYhteys (null, stmt, connection);
 	}
 	
 	private Lainaus read(ResultSet rs) {
@@ -157,7 +157,7 @@ public class Dao {
 		}catch(SQLException e){
 			throw new RuntimeException(e);
 		}finally{
-			close(rs,stmt,yhteys);
+			suljeYhteys(rs,stmt,yhteys);
 		}		
 		return lainat;		
 	}
@@ -189,7 +189,7 @@ public class Dao {
 		}catch(SQLException e){
 			throw new RuntimeException(e);
 		}finally{
-			close(rs,stmt,yhteys);
+			suljeYhteys(rs,stmt,yhteys);
 		}		
 		return lainaus;		
 	}
