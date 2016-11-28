@@ -109,7 +109,7 @@ public class Dao {
 				nideLainaus = new NideLainaus(nide, palautusPvm);
 				lainaus.addNiteenLainaus(nideLainaus);					
 			}
-			
+			System.out.println("dao: "+lainaus);
 			return lainaus;
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
