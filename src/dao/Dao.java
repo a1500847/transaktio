@@ -128,7 +128,7 @@ public class Dao {
 		
 	}
 	
-	public ArrayList<Integer> haeLainausNrot(int asiakasId){
+	public ArrayList<Integer> haeLainausNrot(){
 		Connection yhteys = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
@@ -138,10 +138,8 @@ public class Dao {
 		try{
 			yhteys = yhdista();
 			
-			String sqlSelect = "select numero from lainaus where asiakasnro=?;";
+			String sqlSelect = "select numero from lainaus;";
 			stmt = yhteys.prepareStatement(sqlSelect);
-			
-			stmt.setInt(1, asiakasId);
 			
 			rs=stmt.executeQuery(sqlSelect);
 			
@@ -166,7 +164,7 @@ public class Dao {
 		
 	}
 	
-	public ArrayList <Lainaus> haeKaikki(int asiakasId){
+	public ArrayList <Lainaus> haeKaikki(){
 		Connection yhteys = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
@@ -184,12 +182,9 @@ public class Dao {
 					+ " from lainaus l join asiakas a on a.numero=l.numero join postinumeroalue p on a.postinro = p.postinro"
 					+ " join nidelainaus nl on nl.lainausnro = l.numero join nide n on n.nidenro = nl.nidenro"
 					+ " join nide n2 on n2.isbn = nl.isbn join kirja k on k.isbn = n.isbn"
-					+ " where a.numero=?"
 					+ " order by l.numero;";	
 			
 			stmt = yhteys.prepareStatement(sqlSelect);
-			
-			stmt.setInt(1, asiakasId);
 			
 			rs=stmt.executeQuery(sqlSelect);
 			
@@ -226,13 +221,11 @@ public class Dao {
 								+ " from lainaus l join asiakas a ona.numero=l.numero join postinumeroalue p on a.postinro = p.postinro"
 								+ " join nidelainaus nl on nl.lainausnro = l.numero join nide n on n.nidenro = nl.nidenro"
 								+ " join nide n2 on n2.isbn = nl.isbn join kirja k on k.isbn = n.isbn"
-								+ " where a.numero=?"
-								+ " and l.numero =?"
+								+ " where l.numero =?"
 								+ " order by l.lainauspvm;";
 			stmt = yhteys.prepareStatement(sqlSelect);
-			
-			stmt.setInt(1, asiakasId);
-			stmt.setInt(2, lainaId);
+		
+			stmt.setInt(1, lainaId);
 			
 			rs=stmt.executeQuery(sqlSelect);
 			
