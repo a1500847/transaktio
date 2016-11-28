@@ -1,17 +1,16 @@
-CREATE TABLE postinumeroalue
-(
-	postinro  	CHAR (5)  	NOT NULL PRIMARY KEY,
-	postitmp  	VARCHAR(30)  	NOT NULL
+CREATE TABLE postinumeroalue(
+postinro  	CHAR (5)  	NOT NULL PRIMARY KEY
+,postitmp  	VARCHAR(30)  	NOT NULL
 )ENGINE=InnoDB;
 
 CREATE TABLE asiakas(
-	numero INT NOT NULL AUTO_INCREMENT
-	,etunimi   	VARCHAR (30) NOT NULL
-	,sukunimi        VARCHAR (30) NOT NULL
-	,osoite	 	VARCHAR (30) NOT NULL
-	,postinro  	CHAR (5)     NOT NULL
-	,PRIMARY KEY (numero)
-	,FOREIGN KEY (postinro) REFERENCES postinumeroalue (postinro)
+numero INT NOT NULL AUTO_INCREMENT
+,etunimi   	VARCHAR (30) NOT NULL
+,sukunimi        VARCHAR (30) NOT NULL
+,osoite	 	VARCHAR (30) NOT NULL
+,postinro  	CHAR (5)     NOT NULL
+,PRIMARY KEY (numero)
+,FOREIGN KEY (postinro) REFERENCES postinumeroalue (postinro)
 )ENGINE=InnoDB;
 
 CREATE TABLE kirja (
