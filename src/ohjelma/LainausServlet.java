@@ -56,7 +56,6 @@ public class LainausServlet extends HttpServlet {
 			HttpServletResponse response) {
 		Dao dao = new Dao();
 		ArrayList<Lainaus> lainat = dao.haeKaikki();
-		System.out.println(lainat);
 		request.setAttribute("lainauslista", lainat);
 		
 		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/kaikki_lainaukset.jsp");

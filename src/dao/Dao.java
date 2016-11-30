@@ -107,9 +107,11 @@ public class Dao {
 			while(rs.next()) {
 				palautusPvm = rs.getDate("palautuspvm");
 				nideLainaus = new NideLainaus(nide, palautusPvm);
-				lainaus.addNiteenLainaus(nideLainaus);					
+				lainaus.addNiteenLainaus(nideLainaus);
+				
 			}
 			System.out.println("dao: "+lainaus);
+			System.out.println("loppu");
 			return lainaus;
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -190,11 +192,9 @@ public class Dao {
 			
 			yhteys.commit();
 			yhteys.close();
-			System.out.println();
+			
 			while(rs.next()) {
-				System.out.println(rs);
 				lainaus = read(rs);
-				System.out.println(lainaus);
 				lainat.add(lainaus);
 				
 			}rs.close();	
@@ -204,6 +204,8 @@ public class Dao {
 		}finally{
 			suljeYhteys(rs,stmt,yhteys);
 		}		
+		System.out.println("dao, hae kaikki: "+ lainat);
+		System.out.println("loppu");
 		return lainat;		
 	}
 	

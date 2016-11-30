@@ -99,7 +99,7 @@ public class Asiakas {
 			{
 				osoite = osoite.trim();
 				osoite = osoite.replaceAll("\\s+"," ");
-				System.out.println(osoite);
+				// System.out.println(osoite);
 				if (osoite.matches("([a-z åäöA-ZÅÄÖ]-?){3,}[0-9]*[a-zåäö A-ZÅÄÖ]*[0-9]*") 
 						&& osoite.length() <=30)
 					paluu = osoite.substring(0,1).toUpperCase() + osoite.substring(1);
