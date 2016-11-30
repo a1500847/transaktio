@@ -27,7 +27,7 @@ public class LainausServlet extends HttpServlet {
 			haeLainausNumerot(request, response);
 		} else if (action.equalsIgnoreCase("Hae kaikki lainaukset")) {
 			lainausLista(request, response);
-		} else if (action.equalsIgnoreCase("Hae")) {
+		} else if (action.equalsIgnoreCase("Hae lainaus")) {
 			hae(request, response);
 		} 
 	}

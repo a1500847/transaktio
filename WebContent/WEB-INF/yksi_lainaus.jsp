@@ -8,7 +8,7 @@
 <title>Tilaus</title>
 </head>
 <body>
-<form action="NiteenLainausOhjelma" method="get">
+<form action="LainausServlet" method="get">
 <h1> LAINAUS</h1>
 <p>LAINAUSNUMERO: <c:out value="${lainaus.numero}"/>&nbsp;&nbsp;&nbsp;
 <c:out value="${lainaus.lainausPvm}"/>
@@ -33,23 +33,23 @@ Lainaaja: <c:out value="${lainaus.lainaaja.numero}"/>
 <td>palautuspvm </td>
 </tr>
 
-<c:forEach items="${lainaus.lista}" var="niteenlainaus">
+<c:forEach items="${lainaus.lista}" var="nidelainaus">
 	<tr>
- 		<td><c:out value="${niteenlainaus.nide.kirja.isbn}"/>
+ 		<td><c:out value="${nidelainaus.nide.kirja.isbn}"/>
 		 </td>
  		<td>
- 			&nbsp&nbsp&nbsp<c:out value="${niteenlainaus.nide.nidenro}"/>
+ 			&nbsp&nbsp&nbsp<c:out value="${nidelainaus.nide.nidenro}"/>
  		</td>
- 		<td><c:out value="${niteenlainaus.nide.kirja.nimi}"/>
+ 		<td><c:out value="${nidelainaus.nide.kirja.nimi}"/>
 		 </td>
-		 <td><c:out value="${niteenlainaus.nide.kirja.kirjoittaja}"/>
+		 <td><c:out value="${nidelainaus.nide.kirja.kirjoittaja}"/>
 		 </td>
-		 <td>&nbsp&nbsp&nbsp<c:out value="${niteenlainaus.nide.kirja.painos}"/>
+		 <td>&nbsp&nbsp&nbsp<c:out value="${nidelainaus.nide.kirja.painos}"/>
 		 </td>
-		 <td><c:out value="${niteenlainaus.nide.kirja.kustantaja}"/>
+		 <td><c:out value="${nidelainaus.nide.kirja.kustantaja}"/>
 		 </td>
- 		<td> 			<c:if test="${niteenlainaus.palautusPvm!=null}">
-			 	<c:out value="${niteenlainaus.palautusPvm}"/>
+ 		<td> 			<c:if test="${nidelainaus.palautusPvm!=null}">
+			 	<c:out value="${nidelainaus.palautusPvm}"/>
 			 </c:if>
 		</td>
 	</tr>
