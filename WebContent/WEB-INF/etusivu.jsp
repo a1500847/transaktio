@@ -27,6 +27,10 @@
   <td> 
  	<input type="submit" name="action" value="Hae kaikki lainaukset" />
   </td>
+  <td> &nbsp;&nbsp;&nbsp;</td>
+  <td> 
+ 	<input type="submit" name="action" value="Tee lainaus" />
+  </td>
  </tr>
  </table></form>
 </body>

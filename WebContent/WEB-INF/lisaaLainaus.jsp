@@ -11,7 +11,7 @@
 <h1>LISÄÄ LAINAUS</h1>
 <p>
 </p>
-<form action="NiteenLainausOhjelma" method="get">
+<form action="LainausServlet" method="get">
 Valitse Lainaaja: <select name="asiakas">
 
 <c:forEach items="${asiakkaat}" var= "asiakas">

@@ -23,16 +23,20 @@ public class LainausServlet extends HttpServlet {
 
 		System.out.println("action = " + action);
 
-		if (action == null) {			
+		if (action == null || action.equalsIgnoreCase("Peruuta lainaus") || action.equalsIgnoreCase("Peruuta")) {			
 			haeLainausNumerot(request, response);
 		} else if (action.equalsIgnoreCase("Hae kaikki lainaukset")) {
 			lainausLista(request, response);
 		} else if (action.equalsIgnoreCase("Hae lainaus")) {
 			hae(request, response);
+		} else if (action.equalsIgnoreCase("Tee lainaus")) {
+			teeLainaus(request, response);
+		} else if (action.equalsIgnoreCase("Vahvista lainaus")) {
+			vahvistaLainaus(request, response);
+		} else if (action.equalsIgnoreCase("Talleta lainaus")) {
+			talletaLainaus(request, response);
 		} 
-	}
-		
-		
+	}		
 		
 	private void hae(HttpServletRequest request, HttpServletResponse response) {
 		String nroString = request.getParameter("lainausnumero");
@@ -50,8 +54,6 @@ public class LainausServlet extends HttpServlet {
 		
 	}
 
-
-
 	private void lainausLista(HttpServletRequest request,
 			HttpServletResponse response) {
 		Dao dao = new Dao();
@@ -66,8 +68,6 @@ public class LainausServlet extends HttpServlet {
 		}
 	}
 
-
-
 	private void haeLainausNumerot(HttpServletRequest request, HttpServletResponse response) {
 		Dao dao = new Dao();
 		ArrayList<Integer> lainausNumerot = dao.haeLainausNrot();
@@ -79,6 +79,34 @@ public class LainausServlet extends HttpServlet {
 		} catch (ServletException | IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private void teeLainaus(HttpServletRequest request, HttpServletResponse response){
+		System.out.println("TEELAINAUSTA KUTSUTTU!!!!!");
+		
+		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/lisaaLainaus.jsp");
+		try {
+			dispatcher.forward(request, response);
+		} catch (ServletException | IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void vahvistaLainaus(HttpServletRequest request, HttpServletResponse response){
+		System.out.println("VAHVISTALAINAUSTA KUTSUTTU!!!!!");
+		//Tässä pitäisi näyttää syötetty lainaus ennen kuin se on viety kantaan
+		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/varmistus.jsp");
+		try {
+			dispatcher.forward(request, response);
+		} catch (ServletException | IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void talletaLainaus(HttpServletRequest request, HttpServletResponse response){
+		System.out.println("VAHVISTALAINAUSTA KUTSUTTU!!!!!");
+		//Vie uusi lainaus tietokantaan ja vie takaisin etusivulle
+		haeLainausNumerot(request, response);
 	}
 
 	
