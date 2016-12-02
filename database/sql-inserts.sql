@@ -16,13 +16,19 @@ INSERT INTO kirja (isbn, nimi, kirjoittaja, painos, kustantaja)
 VALUES('154643-3543','Kukkuluuruu','Keijo Kukkanen','5. painos','WSOY');
 
 INSERT INTO kirja (isbn, nimi, kirjoittaja, painos, kustantaja)
-VALUES('12345678-112','pöö','Kalle Kukkonen','6. painos','WSOY');
+VALUES('12345678-112','pï¿½ï¿½','Kalle Kukkonen','6. painos','WSOY');
 
 INSERT INTO nide (nidenro, isbn)
 VALUES(1, '154643-3543');
 
 INSERT INTO nide (nidenro, isbn)
 VALUES(2, '154643-3543');
+
+INSERT INTO kirja (isbn, nimi, kirjoittaja, painos, kustantaja)
+VALUES('12348888-119','ABC-kirja','Kalle Kekkonen','6','WSOY');
+
+INSERT INTO nide (nidenro, isbn)
+VALUES(1, '12348888-119');
 
 INSERT INTO nide (nidenro, isbn)
 VALUES(1, '12345678-112');
