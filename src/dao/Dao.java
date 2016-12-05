@@ -318,6 +318,50 @@ public class Dao {
 		return lainaus;		
 	} 
 	
+	public ArrayList<Asiakas> haeAsiakkaat(){
+		Connection yhteys = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		ArrayList<Asiakas> asiakkaat = new ArrayList<Asiakas>();
+		Asiakas asiakas;
+		boolean jatkuu = false;
+		
+		try{
+			yhteys = yhdista();
+			
+			yhteys.setAutoCommit(false);
+	 		yhteys.setReadOnly(true);
+	 		yhteys.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+			
+			String sqlSelect = "select * from asiakas natural join postinumeroalue;";
+			
+			stmt = yhteys.prepareStatement(sqlSelect);
+			
+			rs=stmt.executeQuery(sqlSelect);
+			
+			yhteys.commit();
+			yhteys.close();
+			
+			jatkuu = rs.next();
+			
+			while(jatkuu) {
+				asiakas = teeAsiakas(rs);
+				asiakkaat.add(asiakas);
+			}rs.close();	
+			
+		}catch(SQLException e){
+			throw new RuntimeException(e);
+		}finally{
+			suljeYhteys(rs,stmt,yhteys);
+		}		
+		
+		return asiakkaat;
+		
+	}
+	
+	
+	
+	
 }
 
 	                  
