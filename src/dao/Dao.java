@@ -158,6 +158,34 @@ public class Dao {
 
 	}	
 	
+	private Nide teeNide(ResultSet rs) throws SQLException {
+		Nide nide = null;
+		Kirja kirja = null;
+		String nimi, kirjoittaja, kustantaja, isbn;
+		String painos;
+		int nidenro;
+		
+
+		if (rs != null) {
+			try {
+				isbn = rs.getString("isbn");
+				nimi = rs.getString("nimi");
+				kirjoittaja = rs.getString("kirjoittaja");
+				painos = rs.getString("painos");
+				kustantaja = rs.getString("kustantaja");
+				nidenro = rs.getInt("nidenro");
+				kirja = new Kirja(isbn, nimi, kirjoittaja, painos, kustantaja);
+				nide = new Nide(kirja, nidenro);
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+				throw e;
+			}
+		}
+
+		return nide;
+
+	}	
 	
 	private int readLainausNro(ResultSet rs){
 		try{
@@ -317,6 +345,94 @@ public class Dao {
 		}		
 		return lainaus;		
 	} 
+	
+	public ArrayList<Asiakas> haeAsiakkaat(){
+		Connection yhteys = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		ArrayList<Asiakas> asiakkaat = new ArrayList<Asiakas>();
+		Asiakas asiakas;
+		boolean jatkuu = false;
+		
+		try{
+			yhteys = yhdista();
+			
+			yhteys.setAutoCommit(false);
+	 		yhteys.setReadOnly(true);
+	 		yhteys.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+			
+			String sqlSelect = "select * from asiakas natural join postinumeroalue;";
+			
+			stmt = yhteys.prepareStatement(sqlSelect);
+			
+			rs=stmt.executeQuery(sqlSelect);
+			
+			yhteys.commit();
+			yhteys.close();
+			
+			jatkuu = rs.next();
+			
+			while(jatkuu) {
+				asiakas = teeAsiakas(rs);
+				asiakkaat.add(asiakas);
+			}rs.close();	
+			
+		}catch(SQLException e){
+			throw new RuntimeException(e);
+		}finally{
+			suljeYhteys(rs,stmt,yhteys);
+		}		
+		
+		return asiakkaat;
+		
+	}
+	
+	public ArrayList<Nide> haeNiteet(){
+		Connection yhteys = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		ArrayList<Nide> niteet = new ArrayList<Nide>();
+		Nide nide;
+		boolean jatkuu = false;
+		
+		try{
+			yhteys = yhdista();
+			
+			yhteys.setAutoCommit(false);
+	 		yhteys.setReadOnly(true);
+	 		yhteys.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+			
+			String sqlSelect = "SELECT * FROM kirja NATURAL JOIN nide"
+								+ " WHERE NOT EXISTS (SELECT null FROM nidelainaus WHERE EXISTS"
+								+ " (SELECT * FROM nidelainaus WHERE nidelainaus.palautuspvm IS NULL"
+								+ " AND nidelainaus.nidenro = nide.nidenro AND nidelainaus.isbn = nide.isbn)); ";
+			
+			stmt = yhteys.prepareStatement(sqlSelect);
+			
+			rs=stmt.executeQuery(sqlSelect);
+			
+			yhteys.commit();
+			yhteys.close();
+			
+			jatkuu = rs.next();
+			
+			while(jatkuu) {
+				nide = teeNide(rs);
+				niteet.add(nide);
+			}rs.close();	
+			
+		}catch(SQLException e){
+			throw new RuntimeException(e);
+		}finally{
+			suljeYhteys(rs,stmt,yhteys);
+		}		
+		
+		return niteet;
+		
+	}
+	
+	
+	
 	
 }
 
