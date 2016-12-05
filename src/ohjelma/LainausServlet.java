@@ -1,6 +1,7 @@
 package ohjelma;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import javax.servlet.RequestDispatcher;
@@ -21,18 +22,27 @@ public class LainausServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		RequestDispatcher disp;
 		String action = request.getParameter("action");
 
 		System.out.println("action = " + action);
 
-		if (action == null || action.equalsIgnoreCase("Peruuta lainaus") || action.equalsIgnoreCase("Peruuta")) {			
+		if (action == null 
+				|| (action!= null && action.equalsIgnoreCase("Etusivu"))
+				|| (action!= null && action.equalsIgnoreCase("Peruuta lainaus")) 
+				|| (action!= null && action.equalsIgnoreCase("Peruuta"))) {	
 			haeLainausNumerot(request, response);
 		} else if (action.equalsIgnoreCase("Hae kaikki lainaukset")) {
 			lainausLista(request, response);
 		} else if (action.equalsIgnoreCase("Hae lainaus")) {
 			hae(request, response);
 		} else if (action.equalsIgnoreCase("Tee lainaus")) {
-			teeLainaus(request, response);
+			try {
+				teeLainaus(request, response);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} else if (action.equalsIgnoreCase("Vahvista lainaus")) {
 			vahvistaLainaus(request, response);
 		} else if (action.equalsIgnoreCase("Talleta lainaus")) {
@@ -83,18 +93,29 @@ public class LainausServlet extends HttpServlet {
 		}
 	}
 	
-	private void teeLainaus(HttpServletRequest request, HttpServletResponse response){
-		System.out.println("TEELAINAUSTA KUTSUTTU!!!!!");
+	private void teeLainaus(HttpServletRequest request, HttpServletResponse response) throws SQLException{
+		RequestDispatcher dispatcher;
 		Dao dao = new Dao();
-		ArrayList<Asiakas> asiakkaat = dao.haeAsiakkaat();
-		ArrayList<Nide> kirjat = dao.haeNiteet();
-		request.setAttribute("asiakkaat", asiakkaat);
-		request.setAttribute("kirjat", kirjat);
-		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/lisaaLainaus.jsp");
+		System.out.println("TEELAINAUSTA KUTSUTTU!!!!!");
+		String jsp = "/WEB-INF/lisaaLainaus.jsp";
+		ArrayList<Asiakas> asiakkaat = null;
+		ArrayList<Nide> kirjat = null;
+		
 		try {
-			dispatcher.forward(request, response);
-		} catch (ServletException | IOException e) {
+			asiakkaat = dao.haeAsiakkaat();
+			kirjat = dao.haeNiteet();
+			System.out.println("Hellooy");
+			if (asiakkaat != null && kirjat != null) {
+				System.out.println(":-)))");
+				request.setAttribute("asiakkaat", asiakkaat);
+				request.setAttribute("kirjat", kirjat);
+				dispatcher = request.getRequestDispatcher(jsp);
+				dispatcher.forward(request, response);
+			} 
+		}
+		catch (ServletException | IOException e) {
 			e.printStackTrace();
+			System.out.println("Virhe!");
 		}
 	}
 	

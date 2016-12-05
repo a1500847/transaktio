@@ -346,97 +346,143 @@ public class Dao {
 		return lainaus;		
 	} 
 	
-	public ArrayList<Asiakas> haeAsiakkaat(){
+	public ArrayList<Asiakas> haeAsiakkaat() throws SQLException{
 		Connection yhteys = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
-		ArrayList<Asiakas> asiakkaat = new ArrayList<Asiakas>();
-		Asiakas asiakas;
+		ArrayList<Asiakas> asiakkaat = null;
+		Asiakas asiakas = null;
 		boolean jatkuu = false;
 		
 		try{
 			yhteys = yhdista();
-			
-			yhteys.setAutoCommit(false);
-	 		yhteys.setReadOnly(true);
-	 		yhteys.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+			if (yhteys != null) {
+				yhteys.setAutoCommit(false);
+				yhteys.setReadOnly(true);
+	 		yhteys.setTransactionIsolation(Connection.TRANSACTION_REPEATABLE_READ);
 			
 			String sqlSelect = "select * from asiakas natural join postinumeroalue;";
 			
-			stmt = yhteys.prepareStatement(sqlSelect);
+			stmt = yhteys.prepareStatement(sqlSelect);			
+			rs=stmt.executeQuery();
+			stmt.close();
 			
-			rs=stmt.executeQuery(sqlSelect);
+			if(rs != null) {
+				yhteys.commit();
+				yhteys.close();
+				jatkuu = rs.next();
+				
+				while(jatkuu) {
+					asiakas = teeAsiakas(rs);
+					
+					if (asiakkaat == null) {
+						asiakkaat = new ArrayList<Asiakas>();
+					}
+						asiakkaat.add(asiakas);
+						jatkuu = rs.next();
+					} rs.close();	
+					
+			} else { 
+				asiakkaat = null;
+				yhteys.commit();
+				yhteys.close();
+			}
+				
 			
-			yhteys.commit();
-			yhteys.close();
-			
-			jatkuu = rs.next();
-			
-			while(jatkuu) {
-				asiakas = teeAsiakas(rs);
-				asiakkaat.add(asiakas);
-			}rs.close();	
-			
-		}catch(SQLException e){
-			throw new RuntimeException(e);
-		}finally{
-			suljeYhteys(rs,stmt,yhteys);
-		}		
-		
+			}
+	
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new SQLException();
+		} finally {
+			if (yhteys != null && yhteys.isClosed() == false) {
+				try {
+					yhteys.rollback(); // peruuta transaktio
+					yhteys.close(); // yhteys poikki
+				} catch (Exception e) {
+					e.printStackTrace();
+					throw new SQLException();
+				}
+			}
+		}
+		System.out.println(asiakkaat);
 		return asiakkaat;
 		
 	}
 	
-	public ArrayList<Nide> haeNiteet(){
+	public ArrayList<Nide> haeNiteet() throws SQLException{
 		Connection yhteys = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
-		ArrayList<Nide> niteet = new ArrayList<Nide>();
-		Nide nide;
+		ArrayList<Nide> niteet = null;
+		Nide nide = null;
 		boolean jatkuu = false;
-		
+		System.out.println("Heip!");
 		try{
 			yhteys = yhdista();
-			
-			yhteys.setAutoCommit(false);
-	 		yhteys.setReadOnly(true);
-	 		yhteys.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
-			
-			String sqlSelect = "SELECT * FROM kirja NATURAL JOIN nide"
-								+ " WHERE NOT EXISTS (SELECT null FROM nidelainaus WHERE EXISTS"
-								+ " (SELECT * FROM nidelainaus WHERE nidelainaus.palautuspvm IS NULL"
-								+ " AND nidelainaus.nidenro = nide.nidenro AND nidelainaus.isbn = nide.isbn)); ";
-			
-			stmt = yhteys.prepareStatement(sqlSelect);
-			
-			rs=stmt.executeQuery(sqlSelect);
-			
-			yhteys.commit();
-			yhteys.close();
-			
-			jatkuu = rs.next();
-			
-			while(jatkuu) {
-				nide = teeNide(rs);
-				niteet.add(nide);
-			}rs.close();	
-			
-		}catch(SQLException e){			
-			throw new RuntimeException(e);
-		} finally{			
-			suljeYhteys(rs,stmt,yhteys);
-		}		
-		
+
+			if (yhteys!=null){
+				yhteys.setAutoCommit(false);
+				yhteys.setReadOnly(true);
+		 		yhteys.setTransactionIsolation(Connection.TRANSACTION_REPEATABLE_READ);
+		 		String sqlSelect = "SELECT * FROM kirja NATURAL JOIN nide"
+						+ " WHERE NOT EXISTS (SELECT null FROM nidelainaus WHERE EXISTS"
+						+ " (SELECT * FROM nidelainaus WHERE nidelainaus.palautuspvm IS NULL"
+						+ " AND nidelainaus.nidenro = nide.nidenro AND nidelainaus.isbn = nide.isbn)); ";
+	
+		 		stmt = yhteys.prepareStatement(sqlSelect);
+		 		rs=stmt.executeQuery();
+		 		stmt.close();
+		 		
+		 		if(rs !=null){
+		 			System.out.println("heippa hei");
+		 			yhteys.commit();
+					yhteys.close();
+					
+					jatkuu = rs.next();
+					while(jatkuu) {
+						nide = teeNide(rs);
+						
+						if(niteet == null) {
+							System.out.println("Moi moi moi mo imooooi");
+							niteet = new ArrayList<Nide>();
+							niteet.add(nide);
+							jatkuu = rs.next();
+						}
+					rs.close();
+					}
+		 		} else {
+		 			niteet = null;
+		 			yhteys.commit();
+		 			yhteys.close();
+		 		}
+			} 
+		}
+			catch (SQLException e) {
+				e.printStackTrace();
+				throw e;
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new SQLException();
+			} finally {
+				if (yhteys != null && yhteys.isClosed() == false) {
+					try {
+						yhteys.rollback(); // peruuta transaktio
+						yhteys.close(); // yhteys poikki
+					} catch (Exception e) {
+						e.printStackTrace();
+						throw new SQLException();
+					}
+				}
+			}
+		System.out.println(niteet);
 		return niteet;
 		
 	}
-	
-	/*public void lisaaLainaus(Asiakas asiakas, ArrayList<NideLainaus> asiakasNideLainat){
-		java.sql.Date date = (java.sql.Date) new Date();
 		
-		
-		
-	}*/
 	
 	public void lisaaLainaus(Lainaus lainaus) throws SQLException{
 		Connection yhteys = null;
@@ -505,10 +551,12 @@ public class Dao {
 		stmt.setInt(2, asiakasNro);*/
 		
 	}
-	
-	
-	
+
 }
+
+	
+	
+
 
 	                  
 			
