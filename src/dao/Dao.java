@@ -421,9 +421,9 @@ public class Dao {
 				niteet.add(nide);
 			}rs.close();	
 			
-		}catch(SQLException e){
+		}catch(SQLException e){			
 			throw new RuntimeException(e);
-		}finally{
+		} finally{			
 			suljeYhteys(rs,stmt,yhteys);
 		}		
 		
@@ -431,6 +431,80 @@ public class Dao {
 		
 	}
 	
+	/*public void lisaaLainaus(Asiakas asiakas, ArrayList<NideLainaus> asiakasNideLainat){
+		java.sql.Date date = (java.sql.Date) new Date();
+		
+		
+		
+	}*/
+	
+	public void lisaaLainaus(Lainaus lainaus) throws SQLException{
+		Connection yhteys = null;
+		PreparedStatement stmt = null;
+		PreparedStatement stmt2 = null;
+		ResultSet rs = null;
+		int lastId;
+		
+		int asiakasNro = lainaus.getLainaaja().getNumero();
+		Date sqlDate = new Date(lainaus.getLainausPvm().getTime());
+
+		String sqlInsert1="INSERT INTO lainaus VALUES(?,?);";	
+		String sqlSelect = "SELECT LAST_INSERT_ID();";
+		
+		stmt.setDate(1, (java.sql.Date) sqlDate);
+		stmt.setInt(2, asiakasNro);
+		
+		try{
+			yhteys = yhdista();
+			
+			yhteys.setAutoCommit(false);
+	 		yhteys.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+	 		
+	 		stmt = yhteys.prepareStatement(sqlInsert1);
+	 		stmt2 = yhteys.prepareStatement(sqlSelect);
+	 		stmt.executeUpdate();
+	 		rs = stmt2.executeQuery();
+	 		
+	 		yhteys.commit();
+			yhteys.close();
+			
+			while(rs.next()){
+				lastId = rs.getInt("last_insert_id()");
+				lainaus.setNumero(lastId);
+			}
+			
+		}catch(SQLException e){			
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new SQLException();
+		} finally{
+			
+			if (yhteys != null && yhteys.isClosed() == false) {
+				try {
+					yhteys.rollback(); // peruuta transaktio
+					yhteys.close(); // yhteys poikki
+					suljeYhteys(stmt,yhteys);
+				} catch (Exception e) {
+					e.printStackTrace();
+					throw new SQLException();
+				}
+			}
+			
+		}
+		
+		PreparedStatement stmt3 = null;
+		
+		/*int asiakasNro = lainaus.getLainaaja().getNumero();
+		Date sqlDate = new Date(lainaus.getLainausPvm().getTime());
+
+		String sqlInsert2="INSERT INTO lainaus VALUES(?,?);";		
+		
+		stmt.setDate(1, (java.sql.Date) sqlDate);
+		stmt.setInt(2, asiakasNro);*/
+		
+	}
 	
 	
 	
