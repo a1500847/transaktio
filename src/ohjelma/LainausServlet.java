@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import kohdeluokat.Asiakas;
 import kohdeluokat.Lainaus;
+import kohdeluokat.Nide;
 import dao.Dao;
 
 
@@ -86,7 +87,9 @@ public class LainausServlet extends HttpServlet {
 		System.out.println("TEELAINAUSTA KUTSUTTU!!!!!");
 		Dao dao = new Dao();
 		ArrayList<Asiakas> asiakkaat = dao.haeAsiakkaat();
+		ArrayList<Nide> kirjat = dao.haeNiteet();
 		request.setAttribute("asiakkaat", asiakkaat);
+		request.setAttribute("kirjat", kirjat);
 		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/lisaaLainaus.jsp");
 		try {
 			dispatcher.forward(request, response);
