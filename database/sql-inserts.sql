@@ -13,34 +13,31 @@ INSERT INTO asiakas (etunimi, sukunimi, osoite, postinro)
 VALUES ('Esko','Kivikoski','Orioninkatu 78 B 23','00550');
 
 INSERT INTO kirja (isbn, nimi, kirjoittaja, painos, kustantaja)
-VALUES('154643-3543','Kukkuluuruu','Keijo Kukkanen','5. painos','WSOY');
+VALUES('12345678-111', 'Lainassa (Ei pitäisi näkyä)','Keijo Kukkanen','5','WSOY');
 
 INSERT INTO kirja (isbn, nimi, kirjoittaja, painos, kustantaja)
-VALUES('12345678-112','pï¿½ï¿½','Kalle Kukkonen','6. painos','WSOY');
-
-INSERT INTO nide (nidenro, isbn)
-VALUES(1, '154643-3543');
-
-INSERT INTO nide (nidenro, isbn)
-VALUES(2, '154643-3543');
+VALUES('12345678-222', 'Palautettu (Pitää näkyä)','Kalle Kukkonen','6','WSOY');
 
 INSERT INTO kirja (isbn, nimi, kirjoittaja, painos, kustantaja)
-VALUES('12348888-119','ABC-kirja','Kalle Kekkonen','6','WSOY');
+VALUES('12345678-333', 'Ei koskaan lainattu (Pitää näkyä)','Kalle Kukkonen','6','WSOY');
 
 INSERT INTO nide (nidenro, isbn)
-VALUES(1, '12348888-119');
+VALUES(1, '12345678-111');
 
 INSERT INTO nide (nidenro, isbn)
-VALUES(1, '12345678-112');
+VALUES(2, '12345678-222');
+
+INSERT INTO nide (nidenro, isbn)
+VALUES(1, '12345678-333');
 
 INSERT INTO lainaus (lainauspvm,asiakasnro)
-VALUES('2016-06-15',3);
+VALUES('2016-12-01',1);
 
 INSERT INTO lainaus (lainauspvm,asiakasnro)
-VALUES('2016-06-14',1);
+VALUES('2016-11-01',2);
 
 INSERT INTO nidelainaus (lainausnro,isbn, nidenro)
-VALUES(1,'154643-3543', 1);
+VALUES(1,'12345678-111', 1);
 
-INSERT INTO nidelainaus (lainausnro, isbn, nidenro)
-VALUES (2, '154643-3543', 2);
+INSERT INTO nidelainaus (lainausnro, isbn, nidenro, palautuspvm)
+VALUES (2, '12345678-222', 2, '2016-11-30');
