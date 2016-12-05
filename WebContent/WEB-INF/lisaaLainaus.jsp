@@ -22,7 +22,9 @@ Valitse Lainaaja: <select name="asiakas">
 </c:forEach>
 </select>
 <div>
+Valitse nide: <select name="nide">
 <c:forEach items="${kirjat}" var="nide">
+
 <option value="${nide.kirja.isbn} ${nide.nidenro}">
 <c:out value="${nide.kirja.isbn}" /> &nbsp;
 <c:out value="${nide.nidenro}" /> &nbsp;
@@ -31,6 +33,7 @@ Valitse Lainaaja: <select name="asiakas">
 <br>
 </option>
 </c:forEach>
+</select>
 </div>
 <p>
 <input type="submit" name="action"! value="vahvista lainaus" />&nbsp;&nbsp;
