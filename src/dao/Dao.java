@@ -420,7 +420,7 @@ public class Dao {
 		ArrayList<Nide> niteet = null;
 		Nide nide = null;
 		boolean jatkuu = false;
-		System.out.println("Heip!");
+		
 		try{
 			yhteys = yhdista();
 
@@ -438,7 +438,7 @@ public class Dao {
 		 		stmt.close();
 		 		
 		 		if(rs !=null){
-		 			System.out.println("heippa hei");
+		 			System.out.println("rs != null");
 		 			yhteys.commit();
 					yhteys.close();
 					
@@ -446,16 +446,15 @@ public class Dao {
 					while(jatkuu) {
 						nide = teeNide(rs);
 						
-						if(niteet == null) {
-							System.out.println("Moi moi moi mo imooooi");
+						if (niteet == null) {
 							niteet = new ArrayList<Nide>();
-							niteet.add(nide);
-							jatkuu = rs.next();
 						}
-					rs.close();
-					}
+						niteet.add(nide);
+							jatkuu = rs.next();
+						} rs.close();	
 		 		} else {
 		 			niteet = null;
+		 			System.out.println("Ei niteitä tietokannassa!");
 		 			yhteys.commit();
 		 			yhteys.close();
 		 		}
