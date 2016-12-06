@@ -42,7 +42,7 @@ public class LainausServlet extends HttpServlet {
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
+			}						
 		} else if (action.equalsIgnoreCase("Vahvista lainaus")) {
 			vahvistaLainaus(request, response);
 		} else if (action.equalsIgnoreCase("Talleta lainaus")) {
@@ -96,7 +96,6 @@ public class LainausServlet extends HttpServlet {
 	private void teeLainaus(HttpServletRequest request, HttpServletResponse response) throws SQLException{
 		RequestDispatcher dispatcher;
 		Dao dao = new Dao();
-		System.out.println("TEELAINAUSTA KUTSUTTU!!!!!");
 		String jsp = "/WEB-INF/lisaaLainaus.jsp";
 		ArrayList<Asiakas> asiakkaat = null;
 		ArrayList<Nide> kirjat = null;
@@ -104,9 +103,9 @@ public class LainausServlet extends HttpServlet {
 		try {
 			asiakkaat = dao.haeAsiakkaat();
 			kirjat = dao.haeNiteet();
-			System.out.println("Hellooy");
+			
 			if (asiakkaat != null && kirjat != null) {
-				System.out.println(":-)))");
+				
 				request.setAttribute("asiakkaat", asiakkaat);
 				request.setAttribute("kirjat", kirjat);
 				dispatcher = request.getRequestDispatcher(jsp);

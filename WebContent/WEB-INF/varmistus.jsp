@@ -10,7 +10,7 @@
 <body>
 <h1>LAINAUS&nbsp;&nbsp;<c:out value="${lainaus.lainausPvm}" />
 </h1>
-<form action="NiteenLainausOhjelma" method="get" >
+<form action="LainausServlet" method="get" >
 lainaaja: <c:out value="${lainaus.lainaaja.numero}"/>&nbsp;&nbsp;
 <c:out value="${lainaus.lainaaja.etunimi}"/>&nbsp;&nbsp;
 <c:out value="${lainaus.lainaaja.sukunimi}"/><br />

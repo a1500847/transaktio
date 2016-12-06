@@ -483,11 +483,12 @@ public class Dao {
 	}
 		
 	
-	public void lisaaLainaus(Lainaus lainaus) throws SQLException{
+	public boolean lisaaLainaus(Lainaus lainaus) throws SQLException{
 		Connection yhteys = null;
 		PreparedStatement stmt = null;
 		PreparedStatement stmt2 = null;
 		ResultSet rs = null;
+		boolean ok = false;
 		int lastId;
 		
 		int asiakasNro = lainaus.getLainaaja().getNumero();
@@ -496,9 +497,6 @@ public class Dao {
 		String sqlInsert1="INSERT INTO lainaus VALUES(?,?);";	
 		String sqlSelect = "SELECT LAST_INSERT_ID();";
 		
-		stmt.setDate(1, (java.sql.Date) sqlDate);
-		stmt.setInt(2, asiakasNro);
-		
 		try{
 			yhteys = yhdista();
 			
@@ -506,17 +504,30 @@ public class Dao {
 	 		yhteys.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 	 		
 	 		stmt = yhteys.prepareStatement(sqlInsert1);
-	 		stmt2 = yhteys.prepareStatement(sqlSelect);
-	 		stmt.executeUpdate();
-	 		rs = stmt2.executeQuery();
+	 		stmt.setDate(1, (java.sql.Date) sqlDate);
+			stmt.setInt(2, asiakasNro);
+	 		int lkm = stmt.executeUpdate();
+	 		stmt.close();
 	 		
-	 		yhteys.commit();
-			yhteys.close();
+	 		if (lkm == 1) {
+	 			stmt2 = yhteys.prepareStatement(sqlSelect);
+	 			rs = stmt2.executeQuery();
+	 		}
+	 		
+	 		if (rs != null) {
+	 			ok = true;
+	 			while(rs.next()){
+					lastId = rs.getInt("last_insert_id()");
+					lainaus.setNumero(lastId);
+				}rs.close();
+	 			
+	 		} else {
+	 			ok = false;
+	 			yhteys.commit();
+				yhteys.close();
+	 		}
 			
-			while(rs.next()){
-				lastId = rs.getInt("last_insert_id()");
-				lainaus.setNumero(lastId);
-			}
+			
 			
 		}catch(SQLException e){			
 			e.printStackTrace();
@@ -539,8 +550,10 @@ public class Dao {
 			
 		}
 		
-		PreparedStatement stmt3 = null;
 		
+		return ok;
+		
+		//PreparedStatement stmt3 = null;
 		/*int asiakasNro = lainaus.getLainaaja().getNumero();
 		Date sqlDate = new Date(lainaus.getLainausPvm().getTime());
 
