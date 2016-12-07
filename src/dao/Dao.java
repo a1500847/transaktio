@@ -413,6 +413,60 @@ public class Dao {
 		
 	}
 	
+	public Asiakas haeAsiakas(int numero) throws SQLException{
+		Connection yhteys = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		Asiakas asiakas = null;
+
+		try{
+			yhteys = yhdista();
+			if (yhteys != null) {
+				yhteys.setAutoCommit(false);
+				yhteys.setReadOnly(true);
+	 		yhteys.setTransactionIsolation(Connection.TRANSACTION_REPEATABLE_READ);
+			
+			String sqlSelect = "select * from asiakas natural join postinumeroalue"
+					+ " where numero = ?;";
+			
+			stmt = yhteys.prepareStatement(sqlSelect);	
+			stmt.setInt(1, numero);
+			rs=stmt.executeQuery();
+			stmt.close();
+			
+			if(rs != null) {
+				yhteys.commit();
+				yhteys.close();
+				
+				asiakas = teeAsiakas(rs);
+				rs.close();
+			} 	else {
+				asiakas = null;
+				yhteys.commit();
+				yhteys.close();
+			}
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new SQLException();
+		} finally {
+			if (yhteys != null && yhteys.isClosed() == false) {
+				try {
+					yhteys.rollback(); // peruuta transaktio
+					yhteys.close(); // yhteys poikki
+				} catch (Exception e) {
+					e.printStackTrace();
+					throw new SQLException();
+				}
+			}
+		}
+		return asiakas;
+	}
+	
 	public ArrayList<Nide> haeNiteet() throws SQLException{
 		Connection yhteys = null;
 		PreparedStatement stmt = null;

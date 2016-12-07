@@ -121,6 +121,15 @@ public class LainausServlet extends HttpServlet {
 	private void vahvistaLainaus(HttpServletRequest request, HttpServletResponse response){
 		System.out.println("VAHVISTALAINAUSTA KUTSUTTU!!!!!");
 		//Tässä pitäisi näyttää syötetty lainaus ennen kuin se on viety kantaan
+
+		String asiakas = request.getParameter("asiakas");
+		String nide = request.getParameter("nide");
+		System.out.println(asiakas + nide);
+		request.setAttribute("asiakas", asiakas);
+		request.setAttribute("nide", nide);
+		
+		valmistaLainaus(request, response);
+		
 		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/varmistus.jsp");
 		try {
 			dispatcher.forward(request, response);
@@ -129,6 +138,23 @@ public class LainausServlet extends HttpServlet {
 		}
 	}
 	
+	private void valmistaLainaus(HttpServletRequest request,
+			HttpServletResponse response) {
+		Dao dao = new Dao();
+		String strAsNumero = request.getParameter("asiakas");
+		int numero = Integer.parseInt(strAsNumero);
+		
+		try {
+			Asiakas asiakas = dao.haeAsiakas(numero);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String strIsbn = request.getParameter("nide");
+		
+		
+	}
+
 	private void talletaLainaus(HttpServletRequest request, HttpServletResponse response){
 		System.out.println("VAHVISTALAINAUSTA KUTSUTTU!!!!!");
 		//Vie uusi lainaus tietokantaan ja vie takaisin etusivulle

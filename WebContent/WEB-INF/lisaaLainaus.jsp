@@ -22,18 +22,18 @@ Valitse Lainaaja: <select name="asiakas">
 </c:forEach>
 </select>
 <div>
-Valitse nide: <select name="nide">
-<c:forEach items="${kirjat}" var="nide">
+Valitse nide: <br>
+<c:forEach items="${kirjat}" var="nide"><br>
 
-<option value="${nide.kirja.isbn} ${nide.nidenro}">
+<input type="checkbox" name="nide" value="${nide.kirja.isbn} ${nide.nidenro}">
 <c:out value="${nide.kirja.isbn}" /> &nbsp;
 <c:out value="${nide.nidenro}" /> &nbsp;
 <c:out value="${nide.kirja.nimi}" /> &nbsp;
 <c:out value="${nide.kirja.kirjoittaja}" /> &nbsp;
 <br>
-</option>
+</input>
 </c:forEach>
-</select>
+
 </div>
 <p>
 <input type="submit" name="action"! value="vahvista lainaus" />&nbsp;&nbsp;
