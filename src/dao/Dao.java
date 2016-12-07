@@ -467,6 +467,61 @@ public class Dao {
 		return asiakas;
 	}
 	
+	public Kirja haeKirja(int numero, String isbn) throws SQLException{
+		Connection yhteys = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		Nide nide = null;
+		Kirja kirja = null;
+
+		try{
+			yhteys = yhdista();
+			if (yhteys != null) {
+				yhteys.setAutoCommit(false);
+				yhteys.setReadOnly(true);
+	 		yhteys.setTransactionIsolation(Connection.TRANSACTION_REPEATABLE_READ);
+			
+			String sqlSelect = "select * from kirja"
+					+ " where isbn = ?;";
+			
+			stmt = yhteys.prepareStatement(sqlSelect);	
+			stmt.setString(1, isbn);
+			rs=stmt.executeQuery();
+			stmt.close();
+			
+			if(rs != null) {
+				yhteys.commit();
+				yhteys.close();
+				
+				nide = teeNide(rs);
+				rs.close();
+			} 	else {
+				asiakas = null;
+				yhteys.commit();
+				yhteys.close();
+			}
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new SQLException();
+		} finally {
+			if (yhteys != null && yhteys.isClosed() == false) {
+				try {
+					yhteys.rollback(); // peruuta transaktio
+					yhteys.close(); // yhteys poikki
+				} catch (Exception e) {
+					e.printStackTrace();
+					throw new SQLException();
+				}
+			}
+		}
+		return asiakas;
+	}
+	
 	public ArrayList<Nide> haeNiteet() throws SQLException{
 		Connection yhteys = null;
 		PreparedStatement stmt = null;
